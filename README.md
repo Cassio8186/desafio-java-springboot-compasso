@@ -6,7 +6,7 @@ Sua tarefa é implementar um catálogo de produtos com Java e Spring Boot.
 
 ## product-ms
 
-Neste microserviço deve ser possível criar, alterar, visualizar e excluir um determinado produto, além de visualizar a lista de produtos atuais disponíveis. Também deve ser possível realizar a busca de produtos filtrando por *name, description e prices*.
+Neste microserviço deve ser possível criar, alterar, visualizar e excluir um determinado produto, além de visualizar a lista de produtos atuais disponíveis. Também deve ser possível realizar a busca de produtos filtrando por *name, description e price*.
 
 ### Formato
 
@@ -17,19 +17,10 @@ O formato esperado de um produto é o seguinte:
     "id": "string",
     "name": "string",
     "description": "string",
-    "prices": [
-      {
-        "currency": "BRL",
-        "amount": 59.99
-      },
-      {
-        "currency": "USD",
-        "amount": 9.99
-      }
-    ]
+    "price_brl": 59.99
   }
 ```
-Durante a criação e alteração, os campos *name, description e prices* são obrigatórios. Em relação ao campo *prices* é necessário ter ao menos um preço para moeda BRL, e no máximo dois preços (BRL e USD), o campo *amount* deve ser positivo.
+Durante a criação e alteração, os campos *name, description e price_brl* são obrigatórios. Em relação ao campo *price_brl* o valor deve ser positivo.
 
 ### Endpoints
 
@@ -76,18 +67,18 @@ Nesse endpoint a API deve retornar a lista atual de todos os produtos filtrados 
 
 Os query parameters aceitos serão: q, currency, min_price e max_price.
 
-**Importante: nenhum deles deverá ser obrigatório na requisição**
+**Importante: nenhum deles deverá ser obrigatório na requisição, entretanto, ao informar o query param currency então min_price e max_price serão obrigatórios**
 
 Onde:
 
 | Query param |  Ação de filtro     
 |-------------|:---------------------------------------------------------------:|
 | q           |  deverá bater o valor contra os campos *name* e *description*   |
-| currency    |  deverá bater o valor filtrando por *prices.currency*           |
-| min_price   | deverá bater o valor ">=" contra o campo *prices.amount*        |
-| max_price   | deverá bater o valor "<=" contra o campo *prices.amount*        |
+| currency    |  será a moeda base da pesquisa                                  |
+| min_price   | deverá bater o valor ">=" contra o campo *price_brl*            |
+| max_price   | deverá bater o valor "<=" contra o campo *price_brl*            |
 
-**Importante: apenas os objetos *price* que baterem no(s) filtro(s) devem ser mantidos na resposta no array de prices**
+**Exemplo: /products/search?currency=USD&min_price=10.5&max_price=50 deverá converter o min_price e max_price que estão em dólar para a cotação de BRL atual para então filtrar na base pelo campo price_brl**
 
 
 ## Validação
