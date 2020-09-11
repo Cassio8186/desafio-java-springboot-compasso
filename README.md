@@ -34,6 +34,7 @@ Devem ser disponibilizados os seguintes endpoints para operação do catálogo d
 | GET         |  /products/{id}   |   Busca de um produto por ID  |
 | GET         |  /products        |   Lista de produtos           |
 | GET         |  /products/search |   Lista de produtos filtrados |
+| DELETE      |  /products/{id}   |   Deleção de um produto       |
 
 #### POST /products
 
@@ -181,6 +182,10 @@ Retorno vazio:
 ```javascript
 []
 ```
+
+#### DELETE /products/{id}
+
+Esse endpoint deve deletar um registro de produto na base de dados. Caso encontre o produto filtrando pelo *id* então deve deletar e retornar um HTTP 200. Se o *id* passado não foi localizado deve retornar um HTTP 404
 
 ## Validação
 
