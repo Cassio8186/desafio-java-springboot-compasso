@@ -69,7 +69,7 @@ Em caso de algum erro de validação, a API deve retornar um HTTP 400 indicando 
 ```
 No campo *status_code* deve vir o código HTTP do erro de validação (400 Bad Request). No campo *message* deverá vir uma mensagem genérica indicando o erro ocorrido.
 
-#### PUT /products/{id}
+#### PUT /products/\{id\}
 
 Esse endpoint deve atualizar um produto baseado no {id} passado via path param. Antes de alterar, deve ser consultada a base de dados pelo *id*, se o produto NÃO for localizado então devolver um HTTP 404 ao cliente. Se localizar o produto, então os campos *name, description e price* devem ser atualizados conforme recebidos no body da requisição.
 
@@ -101,7 +101,7 @@ Importante que antes da atualização as mesmas regras de validação do POST /p
   }
 ```
 
-#### GET /products/{id}
+#### GET /products/\{id\}
 
 Esse endpoint deve retornar o product localizado na base de dados com um HTTP 200. Em caso de não localização do produto, a API deve retornar um HTTP 404 indicando que o recurso não foi localizado, não há necessidade de retornar um JSON (response body) nesse caso.
 
@@ -183,15 +183,15 @@ Retorno vazio:
 []
 ```
 
-#### DELETE /products/{id}
+#### DELETE /products/\{id\}
 
 Esse endpoint deve deletar um registro de produto na base de dados. Caso encontre o produto filtrando pelo *id* então deve deletar e retornar um HTTP 200. Se o *id* passado não foi localizado deve retornar um HTTP 404
 
 ## Validação
 
-A validação dos endpoints e sua correta funcionalidade será através de script automatizado. Logo, importante que você defina a porta do serviço como sendo 9999, ficando a base url então: http://localhost:9999
+A validação dos endpoints e sua correta funcionalidade será através de script automatizado. Logo, é importante que você defina a porta do serviço como sendo 9999, ficando a base url então: http://localhost:9999
 
-Também ocorrerá avaliação técnica do código-fonte produzido.
+Também ocorrerá avaliação técnica do código-fonte produzido, bem como eventual análise estática do mesmo.
 
 ## Entrega do código
 
