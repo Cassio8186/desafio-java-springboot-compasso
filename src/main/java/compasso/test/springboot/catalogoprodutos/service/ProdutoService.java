@@ -1,4 +1,4 @@
-package compasso.test.springboot.catalogoprodutos.config.service;
+package compasso.test.springboot.catalogoprodutos.service;
 
 import compasso.test.springboot.catalogoprodutos.config.model.Produto;
 import compasso.test.springboot.catalogoprodutos.config.repository.ProdutoRepository;

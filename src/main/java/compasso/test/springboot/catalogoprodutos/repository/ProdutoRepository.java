@@ -1,6 +1,6 @@
-package compasso.test.springboot.catalogoprodutos.config.repository;
+package compasso.test.springboot.catalogoprodutos.repository;
 
-import compasso.test.springboot.catalogoprodutos.config.model.Produto;
+import compasso.test.springboot.catalogoprodutos.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package compasso.test.springboot.catalogoprodutos.config.model;
+package compasso.test.springboot.catalogoprodutos.model;
 
 import javax.persistence.*;
 import java.io.Serializable;

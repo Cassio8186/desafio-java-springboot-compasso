@@ -1,13 +1,12 @@
-package compasso.test.springboot.catalogoprodutos.config.service;
+package compasso.test.springboot.catalogoprodutos.service;
 
-import compasso.test.springboot.catalogoprodutos.config.model.Produto;
-import compasso.test.springboot.catalogoprodutos.config.repository.ProdutoRepository;
+import compasso.test.springboot.catalogoprodutos.model.Produto;
+import compasso.test.springboot.catalogoprodutos.repository.ProdutoRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
