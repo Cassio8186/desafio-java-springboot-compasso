@@ -18,6 +18,12 @@ public class Produto implements Serializable {
 	public Produto() {
 	}
 
+	public Produto(String name, String description, BigDecimal price) {
+		this.name = name;
+		this.description = description;
+		this.price = price;
+	}
+
 	public Produto(Long id, String name, String description, BigDecimal price) {
 		this.id = id;
 		this.name = name;

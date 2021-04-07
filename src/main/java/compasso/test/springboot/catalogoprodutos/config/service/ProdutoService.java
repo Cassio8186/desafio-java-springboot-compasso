@@ -32,7 +32,6 @@ public class ProdutoService {
 		return null;
 	}
 
-	public List<Produto> delete(Long id) {
-		return null;
+	public void delete(Long id) {
 	}
 }
