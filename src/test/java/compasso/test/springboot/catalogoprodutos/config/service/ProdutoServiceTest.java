@@ -16,18 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("h2")
-@Transactional
 class ProdutoServiceTest {
 
 	@Autowired
 	private ProdutoService produtoService;
 
-
 	@Autowired
 	private ProdutoRepository produtoRepository;
 
 	@AfterEach
-	public void tearDown() {
+	void tearDown() {
 		this.produtoRepository.deleteAll();
 	}
 
