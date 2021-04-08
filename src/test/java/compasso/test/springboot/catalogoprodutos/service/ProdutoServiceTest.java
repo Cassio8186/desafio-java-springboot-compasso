@@ -146,12 +146,93 @@ class ProdutoServiceTest {
 		this.produtoService.save(product2);
 
 
-		final List<Produto> products = this.produtoService.findAllBySpecification(
-				where(produtoWithNameOrDescription("Desodorante", null)
-						.or(productWithMinMaxPrice(BigDecimal.valueOf(25L), null))));
+		final String nameOrDescriptionFilterValue = "Desodorante";
+		List<Produto> products = this.produtoService.findAllBySpecification(
+				where(produtoWithNameOrDescription(nameOrDescriptionFilterValue)
+						.and(productWithMinMaxPrice(null, null))));
+
+		assertEquals(1, products.size());
+
+		final Produto foundProduct = products.stream().findFirst().get();
+		assertEquals(product.getDescription(), foundProduct.getDescription());
+	}
+
+	@Test
+	void testShouldFindProductByDescription() {
+		final Produto product = new Produto("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+		this.produtoService.save(product);
+		final Produto product2 = new Produto("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
+		this.produtoService.save(product2);
+
+
+		final String nameOrDescriptionFilterValue = "Desodorante Azul";
+		List<Produto> products = this.produtoService.findAllBySpecification(
+				where(produtoWithNameOrDescription(nameOrDescriptionFilterValue)
+						.and(productWithMinMaxPrice(null, null))));
+
+		assertEquals(1, products.size());
+
+		final Produto foundProduct = products.stream().findFirst().get();
+		assertEquals(product.getDescription(), foundProduct.getDescription());
+	}
+
+	@Test
+	void testShouldFindProductByPriceMin() {
+		final Produto product = new Produto("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+		this.produtoService.save(product);
+		final Produto product2 = new Produto("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
+		this.produtoService.save(product2);
+
+
+		final BigDecimal minPriceFilterValue = BigDecimal.valueOf(26L);
+		List<Produto> products = this.produtoService.findAllBySpecification(
+				where(produtoWithNameOrDescription(null)
+						.and(productWithMinMaxPrice(minPriceFilterValue, null))));
+
+		assertEquals(1, products.size());
+
+		final Produto foundProduct = products.stream().findFirst().get();
+		assertEquals(product2.getDescription(), foundProduct.getDescription());
+	}
+
+	@Test
+	void testShouldFindProductByPriceMax() {
+		final Produto product = new Produto("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+		this.produtoService.save(product);
+		final Produto product2 = new Produto("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
+		this.produtoService.save(product2);
+
+
+		final BigDecimal maxPriceFilterValue = BigDecimal.valueOf(15.25);
+		List<Produto> products = this.produtoService.findAllBySpecification(
+				where(produtoWithNameOrDescription(null)
+						.and(productWithMinMaxPrice(null, maxPriceFilterValue))));
+
+		assertEquals(1, products.size());
+
+		final Produto foundProduct = products.stream().findFirst().get();
+		assertEquals(product.getDescription(), foundProduct.getDescription());
+	}
+
+	@Test
+	void testShouldFindProductByPriceMinMax() {
+		final Produto product = new Produto("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+		this.produtoService.save(product);
+		final Produto product2 = new Produto("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
+		this.produtoService.save(product2);
+		final Produto product3 = new Produto("Pão", "Pão Francês", BigDecimal.valueOf(2L));
+		this.produtoService.save(product3);
+
+
+		List<Produto> products = this.produtoService.findAllBySpecification(
+				where(produtoWithNameOrDescription(null)
+						.and(productWithMinMaxPrice(BigDecimal.valueOf(2L), BigDecimal.valueOf(16L)))));
 
 		assertEquals(2, products.size());
 
+		final boolean productsHasSabonete = products.stream().anyMatch(filteredProduct -> filteredProduct.getDescription().equals(product2.getDescription()));
+
+		assertFalse(productsHasSabonete);
 
 
 	}
