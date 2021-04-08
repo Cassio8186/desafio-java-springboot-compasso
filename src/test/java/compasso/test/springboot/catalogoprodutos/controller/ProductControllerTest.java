@@ -99,8 +99,16 @@ class ProductControllerTest {
 				.content(json))
 				.andDo(print())
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.status_code").value(NOT_FOUND.value()))
-				.andExpect(jsonPath("$.message").value(expectedExceptionMessage));
+				.andExpect(expectStatusCode(NOT_FOUND))
+				.andExpect(expectedExceptionMessage(expectedExceptionMessage));
+	}
+
+	private ResultMatcher expectedExceptionMessage(String expectedExceptionMessage) {
+		return jsonPath("$.message").value(expectedExceptionMessage);
+	}
+
+	private ResultMatcher expectStatusCode(HttpStatus httpStatus) {
+		return jsonPath("$.status_code").value(httpStatus.value());
 	}
 
 
