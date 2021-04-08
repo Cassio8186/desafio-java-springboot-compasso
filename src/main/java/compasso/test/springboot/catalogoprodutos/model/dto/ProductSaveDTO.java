@@ -1,25 +1,25 @@
 package compasso.test.springboot.catalogoprodutos.model.dto;
 
-import compasso.test.springboot.catalogoprodutos.model.Produto;
+import compasso.test.springboot.catalogoprodutos.model.Product;
 
 import java.math.BigDecimal;
 
-public class ProdutoSaveDTO {
+public class ProductSaveDTO {
 	private String name;
 	private String description;
 	private BigDecimal price;
 
-	public ProdutoSaveDTO() {
+	public ProductSaveDTO() {
 	}
 
-	public ProdutoSaveDTO(String name, String description, BigDecimal price) {
+	public ProductSaveDTO(String name, String description, BigDecimal price) {
 		this.name = name;
 		this.description = description;
 		this.price = price;
 	}
 
-	public static ProdutoSaveDTO fromEntity(Produto product) {
-		return new ProdutoSaveDTO(product.getName(), product.getDescription(), product.getPrice());
+	public static ProductSaveDTO fromEntity(Product product) {
+		return new ProductSaveDTO(product.getName(), product.getDescription(), product.getPrice());
 	}
 
 	public String getName() {
@@ -48,14 +48,14 @@ public class ProdutoSaveDTO {
 
 	@Override
 	public String toString() {
-		return "ProdutoSaveDTO{" +
+		return "ProductSaveDTO{" +
 				"name='" + name + '\'' +
 				", description='" + description + '\'' +
 				", price=" + price +
 				'}';
 	}
 
-	public Produto toEntity() {
-		return new Produto(this.getName(), this.getDescription(), this.getPrice());
+	public Product toEntity() {
+		return new Product(this.getName(), this.getDescription(), this.getPrice());
 	}
 }

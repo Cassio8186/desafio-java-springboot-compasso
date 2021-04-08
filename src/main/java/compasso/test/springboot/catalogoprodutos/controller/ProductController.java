@@ -1,9 +1,9 @@
 package compasso.test.springboot.catalogoprodutos.controller;
 
-import compasso.test.springboot.catalogoprodutos.model.Produto;
-import compasso.test.springboot.catalogoprodutos.model.dto.ProdutoDTO;
-import compasso.test.springboot.catalogoprodutos.model.dto.ProdutoSaveDTO;
-import compasso.test.springboot.catalogoprodutos.service.ProdutoService;
+import compasso.test.springboot.catalogoprodutos.model.Product;
+import compasso.test.springboot.catalogoprodutos.model.dto.ProductDTO;
+import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
+import compasso.test.springboot.catalogoprodutos.service.ProductService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,46 +13,46 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
-public class ProdutoController {
-	private final ProdutoService produtoService;
+public class ProductController {
+	private final ProductService productService;
 
-	public ProdutoController(ProdutoService produtoService) {
-		this.produtoService = produtoService;
+	public ProductController(ProductService productService) {
+		this.productService = productService;
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ProdutoDTO> save(@RequestBody ProdutoSaveDTO productSaveDTO) {
-		final Produto product = productSaveDTO.toEntity();
-		final Produto savedProduct = this.produtoService.save(product);
-		final ProdutoDTO savedProductDTO = ProdutoDTO.fromEntity(savedProduct);
+	public ResponseEntity<ProductDTO> save(@RequestBody ProductSaveDTO productSaveDTO) {
+		final Product product = productSaveDTO.toEntity();
+		final Product savedProduct = this.productService.save(product);
+		final ProductDTO savedProductDTO = ProductDTO.fromEntity(savedProduct);
 
 		return ResponseEntity.ok(savedProductDTO);
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ProdutoDTO> update(@RequestBody ProdutoSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
-		final Produto produto = productUpdateDTO.toEntity();
-		produto.setId(id);
+	public ResponseEntity<ProductDTO> update(@RequestBody ProductSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
+		final Product product = productUpdateDTO.toEntity();
+		product.setId(id);
 
-		final Produto updatedProduct = this.produtoService.update(produto);
-		final ProdutoDTO productDTO = ProdutoDTO.fromEntity(updatedProduct);
+		final Product updatedProduct = this.productService.update(product);
+		final ProductDTO productDTO = ProductDTO.fromEntity(updatedProduct);
 
 		return ResponseEntity.ok(productDTO);
 
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ProdutoDTO> findById(@PathVariable("id") Long id) {
+	public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
 		throw new RuntimeException("Not inplemented");
 	}
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ProdutoDTO>> findAll() {
+	public ResponseEntity<List<ProductDTO>> findAll() {
 		throw new RuntimeException("Not inplemented");
 	}
 
 	@GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ProdutoDTO>> findAllByFilters(
+	public ResponseEntity<List<ProductDTO>> findAllByFilters(
 			@RequestParam("q") String nameOrDescription,
 			@RequestParam("min_price") BigDecimal minPrice,
 			@RequestParam("max_price") BigDecimal maxPrice) {

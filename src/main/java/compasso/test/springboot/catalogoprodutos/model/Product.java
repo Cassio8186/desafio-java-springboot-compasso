@@ -1,27 +1,34 @@
-package compasso.test.springboot.catalogoprodutos.model.dto;
+package compasso.test.springboot.catalogoprodutos.model;
 
-import compasso.test.springboot.catalogoprodutos.model.Produto;
-
+import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ProdutoDTO {
+@Entity
+@Table
+public class Product implements Serializable {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 	private String description;
 	private BigDecimal price;
 
-	public ProdutoDTO() {
+	public Product() {
 	}
 
-	public ProdutoDTO(Long id, String name, String description, BigDecimal price) {
-		this.id = id;
+	public Product(String name, String description, BigDecimal price) {
 		this.name = name;
 		this.description = description;
 		this.price = price;
 	}
 
-	public static ProdutoDTO fromEntity(Produto produto) {
-		return new ProdutoDTO(produto.getId(), produto.getName(), produto.getDescription(), produto.getPrice());
+	public Product(Long id, String name, String description, BigDecimal price) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.price = price;
 	}
 
 	public Long getId() {
@@ -58,7 +65,7 @@ public class ProdutoDTO {
 
 	@Override
 	public String toString() {
-		return "ProdutoDTO{" +
+		return "Product{" +
 				"id=" + id +
 				", name='" + name + '\'' +
 				", description='" + description + '\'' +

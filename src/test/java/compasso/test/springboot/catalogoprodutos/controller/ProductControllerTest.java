@@ -1,9 +1,9 @@
 package compasso.test.springboot.catalogoprodutos.controller;
 
 import com.google.gson.Gson;
-import compasso.test.springboot.catalogoprodutos.model.Produto;
-import compasso.test.springboot.catalogoprodutos.model.dto.ProdutoSaveDTO;
-import compasso.test.springboot.catalogoprodutos.repository.ProdutoRepository;
+import compasso.test.springboot.catalogoprodutos.model.Product;
+import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
+import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +22,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ProdutoControllerTest {
+class ProductControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Autowired
-	private ProdutoRepository produtoRepository;
+	private ProductRepository productRepository;
 
 	@BeforeEach
 	void beforeEach() {
-		this.produtoRepository.deleteAll();
+		this.productRepository.deleteAll();
 	}
 
 	@Test
 	void saveShouldReturnSavedProduct() throws Exception {
-		final ProdutoSaveDTO product = new ProdutoSaveDTO("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
+		final ProductSaveDTO product = new ProductSaveDTO("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
 		final Gson gson = new Gson();
 		final String json = gson.toJson(product);
 
@@ -55,10 +55,10 @@ class ProdutoControllerTest {
 
 	@Test
 	void saveShouldReturnUpdateProduct() throws Exception {
-		final Produto product = new Produto("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
-		final Produto savedProduct = this.produtoRepository.save(product);
+		final Product product = new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
+		final Product savedProduct = this.productRepository.save(product);
 
-		final ProdutoSaveDTO productSaveDTO = ProdutoSaveDTO.fromEntity(product);
+		final ProductSaveDTO productSaveDTO = ProductSaveDTO.fromEntity(product);
 
 
 		productSaveDTO.setName("Desodor");

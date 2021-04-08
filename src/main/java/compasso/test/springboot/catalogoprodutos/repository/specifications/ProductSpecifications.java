@@ -1,7 +1,7 @@
 package compasso.test.springboot.catalogoprodutos.repository.specifications;
 
 
-import compasso.test.springboot.catalogoprodutos.model.Produto;
+import compasso.test.springboot.catalogoprodutos.model.Product;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
@@ -11,7 +11,7 @@ public class ProductSpecifications {
 	private ProductSpecifications() {
 	}
 
-	public static Specification<Produto> productWithMinMaxPrice(BigDecimal minPrice, BigDecimal maxPrice) {
+	public static Specification<Product> productWithMinMaxPrice(BigDecimal minPrice, BigDecimal maxPrice) {
 		return (root, query, cb) -> {
 			if (minPrice == null && maxPrice == null) {
 				return cb.isTrue(cb.literal(true)); // always true = no filtering
@@ -32,7 +32,7 @@ public class ProductSpecifications {
 	}
 
 
-	public static Specification<Produto> produtoWithNameOrDescription(String nameOrDescription) {
+	public static Specification<Product> produtoWithNameOrDescription(String nameOrDescription) {
 		return (root, query, cb) -> {
 			if (nameOrDescription == null) {
 				return cb.isTrue(cb.literal(true)); // always true = no filtering
