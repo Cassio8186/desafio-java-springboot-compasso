@@ -12,7 +12,10 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.productWithMinMaxPrice;
+import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.produtoWithNameOrDescription;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @SpringBootTest
 @ActiveProfiles("h2")
@@ -133,5 +136,23 @@ class ProdutoServiceTest {
 		assertThrows(EntityNotFoundException.class, () -> {
 			this.produtoService.findById(product.getId());
 		}, exceptionMessage);
+	}
+
+	@Test
+	void testShouldFindProductByName() {
+		final Produto product = new Produto("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+		this.produtoService.save(product);
+		final Produto product2 = new Produto("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
+		this.produtoService.save(product2);
+
+
+		final List<Produto> products = this.produtoService.findAllBySpecification(
+				where(produtoWithNameOrDescription("Desodorante", null)
+						.or(productWithMinMaxPrice(BigDecimal.valueOf(25L), null))));
+
+		assertEquals(2, products.size());
+
+
+
 	}
 }

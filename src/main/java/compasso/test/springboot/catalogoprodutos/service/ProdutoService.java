@@ -3,6 +3,7 @@ package compasso.test.springboot.catalogoprodutos.service;
 import compasso.test.springboot.catalogoprodutos.exception.EntityNotFoundException;
 import compasso.test.springboot.catalogoprodutos.model.Produto;
 import compasso.test.springboot.catalogoprodutos.repository.ProdutoRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,5 +61,9 @@ public class ProdutoService {
 
 		final Produto product = optionalProduct.get();
 		this.produtoRepository.delete(product);
+	}
+
+	public List<Produto> findAllBySpecification(Specification<Produto> specification) {
+		return this.produtoRepository.findAll(specification);
 	}
 }
