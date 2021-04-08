@@ -1,5 +1,6 @@
 package compasso.test.springboot.catalogoprodutos.service;
 
+import compasso.test.springboot.catalogoprodutos.exception.EntityNotFoundException;
 import compasso.test.springboot.catalogoprodutos.model.Produto;
 import compasso.test.springboot.catalogoprodutos.repository.ProdutoRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -67,7 +68,7 @@ class ProdutoServiceTest {
 
 		final String exceptionMessage = String.format("Produto id %d inexistente.", product.getId());
 
-		assertThrows(RuntimeException.class, () -> {
+		assertThrows(EntityNotFoundException.class, () -> {
 			this.produtoService.update(product);
 		}, exceptionMessage);
 	}
@@ -113,7 +114,7 @@ class ProdutoServiceTest {
 	void testFindByIdShouldThrowException() {
 		Long id = 1231324L;
 		final String exceptionMessage = String.format("Produto id %d inexistente.", id);
-		assertThrows(RuntimeException.class, () -> {
+		assertThrows(EntityNotFoundException.class, () -> {
 			this.produtoService.findById(id);
 		}, exceptionMessage);
 
@@ -129,7 +130,7 @@ class ProdutoServiceTest {
 
 
 		this.produtoService.delete(savedProduct.getId());
-		assertThrows(RuntimeException.class, () -> {
+		assertThrows(EntityNotFoundException.class, () -> {
 			this.produtoService.findById(product.getId());
 		}, exceptionMessage);
 	}
