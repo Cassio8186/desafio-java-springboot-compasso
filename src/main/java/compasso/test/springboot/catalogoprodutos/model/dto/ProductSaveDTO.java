@@ -1,12 +1,24 @@
 package compasso.test.springboot.catalogoprodutos.model.dto;
 
 import compasso.test.springboot.catalogoprodutos.model.Product;
+import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class ProductSaveDTO {
+
+	@NotEmpty(message = "deve ser preenchido")
+	@ApiModelProperty(example = "\"Desodorante\"", required = true)
 	private String name;
+
+	@NotEmpty(message = "deve ser preenchido")
+	@ApiModelProperty(example = "\"Desodorante Azul\"", required = true)
 	private String description;
+
+	@NotNull(message = "deve ser preenchido")
+	@ApiModelProperty(example = "15.23", required = true)
 	private BigDecimal price;
 
 	public ProductSaveDTO() {

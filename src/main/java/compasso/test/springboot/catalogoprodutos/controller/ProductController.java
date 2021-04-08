@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ProductController {
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ProductDTO> save(@RequestBody ProductSaveDTO productSaveDTO) {
+	public ResponseEntity<ProductDTO> save(@Valid @RequestBody ProductSaveDTO productSaveDTO) {
 		final Product product = productSaveDTO.toEntity();
 		final Product savedProduct = this.productService.save(product);
 		final ProductDTO savedProductDTO = ProductDTO.fromEntity(savedProduct);
@@ -31,7 +32,7 @@ public class ProductController {
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ProductDTO> update(@RequestBody ProductSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
+	public ResponseEntity<ProductDTO> update(@Valid @RequestBody ProductSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
 		final Product product = productUpdateDTO.toEntity();
 		product.setId(id);
 
