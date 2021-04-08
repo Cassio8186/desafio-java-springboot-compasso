@@ -31,7 +31,14 @@ public class ProdutoController {
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ProdutoDTO> update(@RequestBody ProdutoSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
-		throw new RuntimeException("Not inplemented");
+		final Produto produto = productUpdateDTO.toEntity();
+		produto.setId(id);
+
+		final Produto updatedProduct = this.produtoService.update(produto);
+		final ProdutoDTO productDTO = ProdutoDTO.fromEntity(updatedProduct);
+
+		return ResponseEntity.ok(productDTO);
+
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
