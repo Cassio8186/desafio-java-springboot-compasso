@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
-	private static final String BASE_PACKAGE = "compasso.springboot.test.catalogoprodutos";
+	private static final String BASE_PACKAGE = "compasso.test.springboot.catalogoprodutos";
 	private final String appVersion;
 
 	public SwaggerConfig(@Value("${app.version}") String appVersion) {
