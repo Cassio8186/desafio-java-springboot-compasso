@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -24,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ProductControllerTest {
 
+	private final Gson gson = new Gson();
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -38,7 +39,6 @@ class ProductControllerTest {
 	@Test
 	void saveShouldReturnSavedProduct() throws Exception {
 		final ProductSaveDTO product = new ProductSaveDTO("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
-		final Gson gson = new Gson();
 		final String json = gson.toJson(product);
 
 		final String url = "/products";
@@ -54,7 +54,7 @@ class ProductControllerTest {
 	}
 
 	@Test
-	void saveShouldReturnUpdateProduct() throws Exception {
+	void updateShouldReturnUpdateProduct() throws Exception {
 		final Product product = new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
 		final Product savedProduct = this.productRepository.save(product);
 
@@ -65,7 +65,6 @@ class ProductControllerTest {
 		productSaveDTO.setDescription("Desodorante Azul");
 		productSaveDTO.setPrice(BigDecimal.ONE);
 
-		final Gson gson = new Gson();
 		final String json = gson.toJson(productSaveDTO);
 
 		final String url = String.format("/products/%d", savedProduct.getId());
@@ -79,6 +78,27 @@ class ProductControllerTest {
 				.andExpect(jsonPath("$.id").isNumber())
 				.andExpect(jsonPath("$.description").value(productSaveDTO.getDescription()))
 				.andExpect(jsonPath("$.price").value(productSaveDTO.getPrice()));
+	}
+
+	@Test
+	void updateShouldReturnNotFoundException() throws Exception {
+		final ProductSaveDTO product = new ProductSaveDTO("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
+
+		final String json = gson.toJson(product);
+
+		final int expectedId = 2;
+		final String url = String.format("/products/%d", expectedId);
+
+		final String expectedExceptionMessage = String.format("Product id %d inexistente.", expectedId);
+
+
+		this.mockMvc.perform(put(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.status_code").value(NOT_FOUND.value()))
+				.andExpect(jsonPath("$.message").value(expectedExceptionMessage));
 	}
 
 
