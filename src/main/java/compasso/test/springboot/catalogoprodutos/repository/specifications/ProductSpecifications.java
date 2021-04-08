@@ -32,21 +32,14 @@ public class ProductSpecifications {
 	}
 
 
-	public static Specification<Produto> produtoWithNameOrDescription(String name, String description) {
+	public static Specification<Produto> produtoWithNameOrDescription(String nameOrDescription) {
 		return (root, query, cb) -> {
-			if (name == null && description == null) {
+			if (nameOrDescription == null) {
 				return cb.isTrue(cb.literal(true)); // always true = no filtering
 			}
-			final Predicate namePredicate = cb.equal(root.get("name"), name);
-			if (description == null) {
-				return namePredicate;
-			}
+			final Predicate namePredicate = cb.equal(root.get("name"), nameOrDescription);
 
-			final Predicate descriptionPredicate = cb.equal(root.get("description"), description);
-
-			if (name == null) {
-				return descriptionPredicate;
-			}
+			final Predicate descriptionPredicate = cb.equal(root.get("description"), nameOrDescription);
 
 			return cb.or(namePredicate, descriptionPredicate);
 		};
