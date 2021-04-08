@@ -4,6 +4,7 @@ import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductDTO;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.service.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class ProductController {
 		final Product savedProduct = this.productService.save(product);
 		final ProductDTO savedProductDTO = ProductDTO.fromEntity(savedProduct);
 
-		return ResponseEntity.ok(savedProductDTO);
+		return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
