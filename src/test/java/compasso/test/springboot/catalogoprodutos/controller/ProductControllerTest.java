@@ -16,9 +16,9 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.math.BigDecimal;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,7 +65,9 @@ class ProductControllerTest {
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(json))
 				.andDo(print())
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest())
+				.andExpect(expectStatusCode(BAD_REQUEST))
+				.andExpect(expectedExceptionMessage("name: deve ser preenchido."));
 
 		product = new ProductSaveDTO("Something", null, BigDecimal.ONE);
 		json = gson.toJson(product);
@@ -74,7 +76,10 @@ class ProductControllerTest {
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(json))
 				.andDo(print())
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest())
+				.andExpect(expectStatusCode(BAD_REQUEST))
+				.andExpect(expectedExceptionMessage("description: deve ser preenchido."));
+		;
 
 		product = new ProductSaveDTO("Something", "Something else", null);
 		json = gson.toJson(product);
@@ -83,7 +88,50 @@ class ProductControllerTest {
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(json))
 				.andDo(print())
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest())
+				.andExpect(expectStatusCode(BAD_REQUEST))
+				.andExpect(expectedExceptionMessage("price: deve ser preenchido."));
+		;
+
+	}
+
+	@Test
+	void updateShouldReturnValidationException() throws Exception {
+		ProductSaveDTO product = new ProductSaveDTO(null, "Desodorante Verde", BigDecimal.valueOf(20L));
+		String json = gson.toJson(product);
+
+		final String url = "/products/1";
+		this.mockMvc.perform(put(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andExpect(expectStatusCode(BAD_REQUEST))
+				.andExpect(expectedExceptionMessage("name: deve ser preenchido."));
+
+		product = new ProductSaveDTO("Something", null, BigDecimal.ONE);
+		json = gson.toJson(product);
+
+		this.mockMvc.perform(put(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andExpect(expectStatusCode(BAD_REQUEST))
+				.andExpect(expectedExceptionMessage("description: deve ser preenchido."));
+		;
+
+		product = new ProductSaveDTO("Something", "Something else", null);
+		json = gson.toJson(product);
+
+		this.mockMvc.perform(put(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andExpect(expectStatusCode(BAD_REQUEST))
+				.andExpect(expectedExceptionMessage("price: deve ser preenchido."));
+		;
 
 	}
 
