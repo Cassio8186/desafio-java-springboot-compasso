@@ -56,6 +56,38 @@ class ProductControllerTest {
 	}
 
 	@Test
+	void saveShouldReturnValidationException() throws Exception {
+		ProductSaveDTO product = new ProductSaveDTO(null, "Desodorante Verde", BigDecimal.valueOf(20L));
+		String json = gson.toJson(product);
+
+		final String url = "/products";
+		this.mockMvc.perform(post(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+
+		product = new ProductSaveDTO("Something", null, BigDecimal.ONE);
+		json = gson.toJson(product);
+
+		this.mockMvc.perform(post(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+
+		product = new ProductSaveDTO("Something", "Something else", null);
+		json = gson.toJson(product);
+
+		this.mockMvc.perform(post(url)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(json))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+
+	}
+
+	@Test
 	void updateShouldReturnUpdateProduct() throws Exception {
 		final Product product = new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
 		final Product savedProduct = this.productRepository.save(product);
