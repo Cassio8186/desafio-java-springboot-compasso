@@ -69,7 +69,7 @@ class ProductServiceTest {
 		final Product product = new Product(1L, "Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
 
 
-		final String exceptionMessage = String.format("Product id %d inexistente.", product.getId());
+		final String exceptionMessage = String.format("Produto id %d inexistente.", product.getId());
 
 		assertThrows(EntityNotFoundException.class, () -> {
 			this.productService.update(product);
@@ -116,7 +116,7 @@ class ProductServiceTest {
 	@Test
 	void testFindByIdShouldThrowException() {
 		Long id = 1231324L;
-		final String exceptionMessage = String.format("Product id %d inexistente.", id);
+		final String exceptionMessage = String.format("Produto id %d inexistente.", id);
 		assertThrows(EntityNotFoundException.class, () -> {
 			this.productService.findById(id);
 		}, exceptionMessage);
@@ -129,7 +129,7 @@ class ProductServiceTest {
 		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
 		final Product savedProduct = this.productService.save(product);
 
-		final String exceptionMessage = String.format("Product id %d inexistente.", savedProduct.getId());
+		final String exceptionMessage = String.format("Produto id %d inexistente.", savedProduct.getId());
 
 
 		this.productService.delete(savedProduct.getId());

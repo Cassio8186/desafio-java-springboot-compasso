@@ -6,6 +6,7 @@ import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -136,7 +137,7 @@ class ProductControllerTest {
 	}
 
 	@Test
-	void updateShouldReturnUpdateProduct() throws Exception {
+	void updateShouldReturnUpdatedProduct() throws Exception {
 		final Product product = new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
 		final Product savedProduct = this.productRepository.save(product);
 
@@ -171,7 +172,7 @@ class ProductControllerTest {
 		final int expectedId = 2;
 		final String url = String.format("/products/%d", expectedId);
 
-		final String expectedExceptionMessage = String.format("Product id %d inexistente.", expectedId);
+		final String expectedExceptionMessage = String.format("Produto id %d inexistente.", expectedId);
 
 
 		this.mockMvc.perform(put(url)
