@@ -1,5 +1,7 @@
 package compasso.test.springboot.catalogoprodutos.model.dto;
 
+import compasso.test.springboot.catalogoprodutos.model.Produto;
+
 import java.math.BigDecimal;
 
 public class ProdutoDTO {
@@ -16,6 +18,10 @@ public class ProdutoDTO {
 		this.name = name;
 		this.description = description;
 		this.price = price;
+	}
+
+	public static ProdutoDTO fromEntity(Produto produto) {
+		return new ProdutoDTO(produto.getId(), produto.getName(), produto.getDescription(), produto.getPrice());
 	}
 
 	public Long getId() {

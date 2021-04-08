@@ -1,5 +1,6 @@
 package compasso.test.springboot.catalogoprodutos.controller;
 
+import compasso.test.springboot.catalogoprodutos.model.Produto;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProdutoDTO;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProdutoSaveDTO;
 import compasso.test.springboot.catalogoprodutos.service.ProdutoService;
@@ -21,7 +22,11 @@ public class ProdutoController {
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ProdutoDTO> save(@RequestBody ProdutoSaveDTO productSaveDTO) {
-		throw new RuntimeException("Not inplemented");
+		final Produto product = productSaveDTO.toEntity();
+		final Produto savedProduct = this.produtoService.save(product);
+		final ProdutoDTO savedProductDTO = ProdutoDTO.fromEntity(savedProduct);
+
+		return ResponseEntity.ok(savedProductDTO);
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
