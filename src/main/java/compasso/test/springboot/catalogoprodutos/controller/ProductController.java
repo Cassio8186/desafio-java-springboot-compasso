@@ -5,6 +5,7 @@ import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductDTO;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.service.ProductService;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class ProductController {
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Salva um produto")
 	public ResponseEntity<ProductDTO> save(@Valid @RequestBody ProductSaveDTO productSaveDTO) {
 		try {
 			log.info("Save product request: [{}]", productSaveDTO);
@@ -52,6 +54,7 @@ public class ProductController {
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Atualiza um produto")
 	public ResponseEntity<ProductDTO> update(@Valid @RequestBody ProductSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
 		try {
 			log.info("Update product request: [{}]", productUpdateDTO);
@@ -73,6 +76,7 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Retorna um produto por id")
 	@ApiResponses({@ApiResponse(code = 404, message = "Not Found")})
 	public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
 		try {
@@ -94,6 +98,7 @@ public class ProductController {
 	}
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Retorna uma lista com todos os produtos")
 	public ResponseEntity<List<ProductDTO>> findAll() {
 		log.info("Find all products request");
 		final List<Product> products = this.productService.findAll();
@@ -105,6 +110,7 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Retorna uma lista de produtos filtrados")
 	public ResponseEntity<List<ProductDTO>> findAllByFilters(
 			@RequestParam(value = "q", required = false) String nameOrDescription,
 			@RequestParam(value = "min_price", required = false) BigDecimal minPrice,
@@ -128,6 +134,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping(value = "/{id}")
+	@ApiOperation(value = "Remove um produto")
 	public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
 		try {
 			log.info("Delete product by id {} request",id);
