@@ -14,6 +14,9 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.productWithMinMaxPrice;
+import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.produtoWithNameOrDescription;
+import static org.springframework.data.jpa.domain.Specification.where;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -61,16 +64,24 @@ public class ProductController {
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ProductDTO>> findAll() {
-		throw new RuntimeException("Not inplemented");
+		final List<Product> products = this.productService.findAll();
+		final List<ProductDTO> productDTOS = ProductDTO.fromEntity(products);
+
+		return ResponseEntity.ok(productDTOS);
 	}
 
 	@GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ProductDTO>> findAllByFilters(
-			@RequestParam("q") String nameOrDescription,
-			@RequestParam("min_price") BigDecimal minPrice,
-			@RequestParam("max_price") BigDecimal maxPrice) {
+			@RequestParam(value = "q", required = false) String nameOrDescription,
+			@RequestParam(value = "min_price", required = false) BigDecimal minPrice,
+			@RequestParam(value = "max_price", required = false) BigDecimal maxPrice) {
 
-		throw new RuntimeException("Not inplemented");
+		final List<Product> products = this.productService.findAllBySpecification(where(produtoWithNameOrDescription(nameOrDescription)).
+				and(productWithMinMaxPrice(minPrice, maxPrice)));
+
+		List<ProductDTO> productDTOs = ProductDTO.fromEntity(products);
+
+		return ResponseEntity.ok(productDTOs);
 	}
 
 	@DeleteMapping(value = "/{id}")

@@ -3,6 +3,8 @@ package compasso.test.springboot.catalogoprodutos.model.dto;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductDTO {
 	private Long id;
@@ -22,6 +24,10 @@ public class ProductDTO {
 
 	public static ProductDTO fromEntity(Product product) {
 		return new ProductDTO(product.getId(), product.getName(), product.getDescription(), product.getPrice());
+	}
+
+	public static List<ProductDTO> fromEntity(List<Product> products) {
+		return products.stream().map(product -> fromEntity(product)).collect(Collectors.toList());
 	}
 
 	public Long getId() {
