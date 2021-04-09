@@ -58,7 +58,7 @@ class ProductControllerTest {
 				.andDo(print())
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.name").value(product.getName()))
-				.andExpect(jsonPath("$.id").isNumber())
+				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.description").value(product.getDescription()))
 				.andExpect(jsonPath("$.price").value(product.getPrice()));
 	}
@@ -165,7 +165,7 @@ class ProductControllerTest {
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value(productSaveDTO.getName()))
-				.andExpect(jsonPath("$.id").isNumber())
+				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.description").value(productSaveDTO.getDescription()))
 				.andExpect(jsonPath("$.price").value(productSaveDTO.getPrice()));
 	}
@@ -210,7 +210,7 @@ class ProductControllerTest {
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value(product.getName()))
-				.andExpect(jsonPath("$.id").isNumber())
+				.andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.description").value(product.getDescription()))
 				.andExpect(jsonPath("$.price").value(product.getPrice().doubleValue()));
 	}
