@@ -3,6 +3,7 @@ package compasso.test.springboot.catalogoprodutos.model.dto;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class ProductSaveDTO {
 
 	@NotNull(message = "deve ser preenchido")
 	@ApiModelProperty(example = "15.23", required = true)
+	@DecimalMin(value = "0.0", message = "Deve ser acima de 0 reais.", inclusive = false)
 	private BigDecimal price;
 
 	public ProductSaveDTO() {
