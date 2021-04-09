@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/products")
@@ -73,8 +74,14 @@ public class ProductController {
 	}
 
 	@DeleteMapping(value = "/{id}")
-	public void deleteById(@PathVariable("id") Long id) {
-		throw new RuntimeException("Not inplemented");
+	public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+		try {
+			this.productService.deleteById(id);
+			return new ResponseEntity<>(OK);
+		} catch (EntityNotFoundException ex) {
+			return new ResponseEntity<>(NOT_FOUND);
+		}
+
 	}
 
 }

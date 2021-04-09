@@ -51,7 +51,7 @@ public class ProductService {
 		return optionalProduct.orElseThrow(entityNotFoundExceptionSupplierById(id));
 	}
 
-	public void delete(Long id) {
+	public void deleteById(Long id) {
 		final Optional<Product> optionalProduct = this.productRepository.findById(id);
 		final boolean productDoesNotExists = !optionalProduct.isPresent();
 

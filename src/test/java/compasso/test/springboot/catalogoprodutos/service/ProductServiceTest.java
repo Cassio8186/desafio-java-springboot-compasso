@@ -132,7 +132,7 @@ class ProductServiceTest {
 		final String exceptionMessage = String.format("Produto id %d inexistente.", savedProduct.getId());
 
 
-		this.productService.delete(savedProduct.getId());
+		this.productService.deleteById(savedProduct.getId());
 		assertThrows(EntityNotFoundException.class, () -> {
 			this.productService.findById(product.getId());
 		}, exceptionMessage);
