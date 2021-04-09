@@ -6,7 +6,6 @@ import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -194,11 +193,27 @@ class ProductControllerTest {
 
 
 	@Test
-	void update() {
+	void findByIdShouldReturnProduct() throws Exception {
+		final Product product = new Product("Desodorante", "DesodoranteVerde", BigDecimal.valueOf(14L));
+		final Product saveProduct = this.productRepository.save(product);
+
+		final String url = "/products/" + saveProduct.getId();
+		this.mockMvc.perform(get(url))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value(product.getName()))
+				.andExpect(jsonPath("$.id").isNumber())
+				.andExpect(jsonPath("$.description").value(product.getDescription()))
+				.andExpect(jsonPath("$.price").value(product.getPrice().doubleValue()));
 	}
 
 	@Test
-	void findById() {
+	void findByIdShouldReturnNotFoundException() throws Exception {
+		final String url = "/products/1241";
+
+		this.mockMvc.perform(get(url))
+				.andDo(print())
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
