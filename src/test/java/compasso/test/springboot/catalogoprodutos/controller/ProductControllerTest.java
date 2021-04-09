@@ -225,6 +225,23 @@ class ProductControllerTest {
 	}
 
 	@Test
-	void deleteById() {
+	void testDeleteByShouldReturnOk() throws Exception {
+		final Product product = new Product("Desodorante", "DesodoranteVerde", BigDecimal.valueOf(14L));
+		final Product saveProduct = this.productRepository.save(product);
+
+		final String url = "/products/" + saveProduct.getId();
+		this.mockMvc.perform(delete(url))
+				.andDo(print())
+				.andExpect(status().isOk());
 	}
+
+	@Test
+	void testDeleteByIdShouldReturnNotFound() throws Exception {
+		final String url = "/products/1241";
+
+		this.mockMvc.perform(delete(url))
+				.andDo(print())
+				.andExpect(status().isNotFound());
+	}
+
 }
