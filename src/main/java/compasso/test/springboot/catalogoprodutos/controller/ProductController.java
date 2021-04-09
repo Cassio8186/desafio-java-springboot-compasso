@@ -5,6 +5,8 @@ import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductDTO;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.service.ProductService;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +53,7 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiResponses({@ApiResponse(code = 404, message = "Not Found")})
 	public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
 		try {
 			final Product product = this.productService.findById(id);
