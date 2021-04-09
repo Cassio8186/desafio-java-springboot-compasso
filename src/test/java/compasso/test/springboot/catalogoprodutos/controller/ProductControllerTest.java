@@ -16,12 +16,12 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.math.BigDecimal;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -217,7 +217,32 @@ class ProductControllerTest {
 	}
 
 	@Test
-	void findAll() {
+	void testFindByIdShouldProductList() throws Exception {
+		this.productRepository.save(new Product("a", "", BigDecimal.ZERO));
+		this.productRepository.save(new Product("a", "", BigDecimal.ZERO));
+		this.productRepository.save(new Product("a", "", BigDecimal.ZERO));
+
+
+		final String url = "/products";
+
+		this.mockMvc.perform(get(url))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$", hasSize(3)));
+	}
+
+	@Test
+	void testFindByIdShouldEmptyList() throws Exception {
+		final String url = "/products";
+
+		this.mockMvc.perform(get(url))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$", hasSize(0)));
 	}
 
 	@Test
