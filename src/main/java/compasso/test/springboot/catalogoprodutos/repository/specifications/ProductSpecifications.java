@@ -6,9 +6,21 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 public class ProductSpecifications {
 	private ProductSpecifications() {
+	}
+
+	private static String getLikeFilter(String searchValue) {
+		StringBuilder likeFilterBuilder = new StringBuilder();
+		likeFilterBuilder.append("%");
+		Arrays.stream(searchValue.split(" ")).forEach(word -> {
+			likeFilterBuilder.append(word.toLowerCase()).append("%");
+		});
+
+		return likeFilterBuilder.toString();
+
 	}
 
 	public static Specification<Product> productWithMinMaxPrice(BigDecimal minPrice, BigDecimal maxPrice) {
@@ -31,15 +43,17 @@ public class ProductSpecifications {
 		};
 	}
 
-
-	public static Specification<Product> produtoWithNameOrDescription(String nameOrDescription) {
+	public static Specification<Product> produtoWithNameOrDescription(final String nameOrDescription) {
 		return (root, query, cb) -> {
 			if (nameOrDescription == null) {
 				return cb.isTrue(cb.literal(true)); // always true = no filtering
 			}
-			final Predicate namePredicate = cb.equal(root.get("name"), nameOrDescription);
 
-			final Predicate descriptionPredicate = cb.equal(root.get("description"), nameOrDescription);
+
+			final String nameOrDescriptionLikeValue = getLikeFilter(nameOrDescription);
+			final Predicate namePredicate = cb.like(cb.lower(root.get("name")), nameOrDescriptionLikeValue);
+
+			final Predicate descriptionPredicate = cb.like(cb.lower(root.get("description")), nameOrDescriptionLikeValue);
 
 			return cb.or(namePredicate, descriptionPredicate);
 		};

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductDTO {
-	private Long id;
+	private String id;
 	private String name;
 	private String description;
 	private BigDecimal price;
@@ -15,7 +15,7 @@ public class ProductDTO {
 	public ProductDTO() {
 	}
 
-	public ProductDTO(Long id, String name, String description, BigDecimal price) {
+	public ProductDTO(String id, String name, String description, BigDecimal price) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -23,18 +23,18 @@ public class ProductDTO {
 	}
 
 	public static ProductDTO fromEntity(Product product) {
-		return new ProductDTO(product.getId(), product.getName(), product.getDescription(), product.getPrice());
+		return new ProductDTO(product.getId().toString(), product.getName(), product.getDescription(), product.getPrice());
 	}
 
 	public static List<ProductDTO> fromEntity(List<Product> products) {
 		return products.stream().map(product -> fromEntity(product)).collect(Collectors.toList());
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

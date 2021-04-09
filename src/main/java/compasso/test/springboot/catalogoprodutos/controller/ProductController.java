@@ -55,8 +55,10 @@ public class ProductController {
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Atualiza um produto")
-	public ResponseEntity<ProductDTO> update(@Valid @RequestBody ProductSaveDTO productUpdateDTO, @PathVariable("id") Long id) {
+	public ResponseEntity<ProductDTO> update(@Valid @RequestBody ProductSaveDTO productUpdateDTO, @PathVariable("id") String idString) {
 		try {
+			final Long id = this.convertIdToLong(idString);
+
 			log.info("Update product request: [{}]", productUpdateDTO);
 
 			final Product product = productUpdateDTO.toEntity();
@@ -78,8 +80,10 @@ public class ProductController {
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Retorna um produto por id")
 	@ApiResponses({@ApiResponse(code = 404, message = "Not Found")})
-	public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
+	public ResponseEntity<ProductDTO> findById(@PathVariable("id") String idString) {
 		try {
+			Long id = convertIdToLong(idString);
+
 			log.info("Find product by id {} request", id);
 
 			final Product product = this.productService.findById(id);
@@ -88,11 +92,11 @@ public class ProductController {
 
 			return ResponseEntity.ok(ProductDTO.fromEntity(product));
 		} catch (EntityNotFoundException ex) {
-			log.error("Product by id {} was not found", id);
+			log.error("Product by id {} was not found", idString);
 
 			return new ResponseEntity<>(NOT_FOUND);
-		}		catch (Exception ex){
-			log.info("Find product by id {} request failed",id);
+		} catch (Exception ex) {
+			log.info("Find product by id {} request failed", idString);
 			throw ex;
 		}
 	}
@@ -135,20 +139,33 @@ public class ProductController {
 
 	@DeleteMapping(value = "/{id}")
 	@ApiOperation(value = "Remove um produto")
-	public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+	public ResponseEntity<Void> deleteById(@Valid @PathVariable("id") String idString) {
+
 		try {
-			log.info("Delete product by id {} request",id);
+			Long id = convertIdToLong(idString);
+
+			log.info("Delete product by id {} request", id);
 			this.productService.deleteById(id);
-			log.info("Delete product by id {} request was successful",id);
+			log.info("Delete product by id {} request was successful", id);
 			return new ResponseEntity<>(OK);
 		} catch (EntityNotFoundException ex) {
-			log.info("Product by id {} was not found",id);
+			log.info("Product by id {} was not found", idString);
 			return new ResponseEntity<>(NOT_FOUND);
 		} catch (Exception ex) {
-			log.info("Delete product by id {} request failed", id);
+			log.info("Delete product by id {} request failed", idString);
 			throw ex;
 		}
 
+	}
+
+	private Long convertIdToLong(String idString) {
+		Long id;
+		try {
+			id = Long.parseLong(idString);
+		} catch (Exception ex) {
+			throw this.productService.entityNotFoundExceptionSupplierById(idString).get();
+		}
+		return id;
 	}
 
 }
