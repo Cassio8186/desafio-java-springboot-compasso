@@ -6,6 +6,10 @@ import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,8 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -245,8 +251,78 @@ class ProductControllerTest {
 				.andExpect(jsonPath("$", hasSize(0)));
 	}
 
+	@ParameterizedTest
+	@MethodSource("queryParamsAndExpectedSizesProviders")
+	void testFindAllByFilters(final String queryParam, final int expectedSize) throws Exception {
+		this.productRepository.deleteAll();
+
+		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
+		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
+		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
+
+		this.mockMvc.perform(get("/products/search?" + queryParam))
+				.andExpect(jsonPath("$", hasSize(expectedSize)));
+	}
+
+	static Stream<Arguments> queryParamsAndExpectedSizesProviders() {
+		return Stream.of(
+				arguments("q=Desodorante Verde",2),
+				arguments("q=Desodorante Verde&min_price=12.00",2),
+				arguments("q=Desodorante Verde&min_price=14.00",1),
+				arguments("min_price=12.00&max_price=26.00",3),
+				arguments("max_price=26.00",3),
+				arguments("max_price=14.00",1),
+				arguments("min_price=15.13",1),
+				arguments("min_price=27.00",0),
+				arguments("q=Sabão",1),
+				arguments("q=Sabão top",1)
+		);
+	}
+
+
+	void findAllByFiltersNameOrDescriptionAndMinPrice() throws Exception {
+		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
+		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
+		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
+
+		this.mockMvc.perform(get("/products/search?q=Desodorante Verde&min_price=12.00"))
+				.andExpect(jsonPath("$", hasSize(3)));
+	}
 	@Test
-	void findAllByFilters() {
+	void findAllByFiltersMinPriceAndMaxPrice() throws Exception {
+		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
+		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
+		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
+
+		this.mockMvc.perform(get("/products/search?min_price=12.00&max_price=26.00"))
+				.andExpect(jsonPath("$", hasSize(3)));
+	}
+	@Test
+	void findAllByFiltersMaxPrice() throws Exception {
+		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
+		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
+		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
+
+		this.mockMvc.perform(get("/products/search?max_price=26.00"))
+				.andExpect(jsonPath("$", hasSize(3)));
+	}
+	@Test
+	void findAllByFiltersName() throws Exception {
+		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
+		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
+		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
+
+		this.mockMvc.perform(get("/products/search?q=Sabão"))
+				.andExpect(jsonPath("$", hasSize(1)));
+	}
+	@Test
+	void findAllByFiltersDescription() throws Exception {
+		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
+		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
+		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
+
+		this.mockMvc.perform(get("/products/search?q=Sabão top"))
+				.andExpect(jsonPath("$", hasSize(1)));
 	}
 
 	@Test
