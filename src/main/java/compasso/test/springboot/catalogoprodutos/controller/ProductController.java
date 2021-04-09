@@ -1,5 +1,6 @@
 package compasso.test.springboot.catalogoprodutos.controller;
 
+import compasso.test.springboot.catalogoprodutos.exception.EntityNotFoundException;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductDTO;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("/products")
@@ -45,7 +48,14 @@ public class ProductController {
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id) {
-		throw new RuntimeException("Not inplemented");
+		try {
+			final Product product = this.productService.findById(id);
+
+			return ResponseEntity.ok(ProductDTO.fromEntity(product));
+
+		} catch (EntityNotFoundException ex) {
+			return new ResponseEntity<>(NOT_FOUND);
+		}
 	}
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
