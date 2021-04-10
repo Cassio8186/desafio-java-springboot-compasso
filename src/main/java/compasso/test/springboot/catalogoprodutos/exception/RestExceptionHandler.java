@@ -17,6 +17,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -64,7 +65,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorDTO errorDTO = new ErrorDTO();
 		errorDTO.setStatusCode(500);
 
-		ex.printStackTrace();
+		logger.info(ex);
 
 		final String messagem = "ERRO INTERNO: " + ex.getMessage();
 		errorDTO.setMessage(messagem);
