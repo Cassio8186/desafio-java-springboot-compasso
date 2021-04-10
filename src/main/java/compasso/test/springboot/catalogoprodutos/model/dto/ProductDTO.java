@@ -27,7 +27,7 @@ public class ProductDTO {
 	}
 
 	public static List<ProductDTO> fromEntity(List<Product> products) {
-		return products.stream().map(product -> fromEntity(product)).collect(Collectors.toList());
+		return products.stream().map(ProductDTO::fromEntity).collect(Collectors.toList());
 	}
 
 	public String getId() {

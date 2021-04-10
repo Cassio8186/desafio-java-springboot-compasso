@@ -87,7 +87,6 @@ class ProductControllerTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(expectStatusCode(BAD_REQUEST))
 				.andExpect(expectedExceptionMessage("description: deve ser preenchido."));
-		;
 
 		product = new ProductSaveDTO("Something", "Something else", null);
 		json = gson.toJson(product);
@@ -99,7 +98,6 @@ class ProductControllerTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(expectStatusCode(BAD_REQUEST))
 				.andExpect(expectedExceptionMessage("price: deve ser preenchido."));
-		;
 
 	}
 
@@ -127,7 +125,6 @@ class ProductControllerTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(expectStatusCode(BAD_REQUEST))
 				.andExpect(expectedExceptionMessage("description: deve ser preenchido."));
-		;
 
 		product = new ProductSaveDTO("Something", "Something else", null);
 		json = gson.toJson(product);
@@ -139,7 +136,6 @@ class ProductControllerTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(expectStatusCode(BAD_REQUEST))
 				.andExpect(expectedExceptionMessage("price: deve ser preenchido."));
-		;
 
 	}
 
@@ -279,52 +275,6 @@ class ProductControllerTest {
 				arguments("q=Sabão",1),
 				arguments("q=Sabão top",1)
 		);
-	}
-
-
-	void findAllByFiltersNameOrDescriptionAndMinPrice() throws Exception {
-		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
-		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
-		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
-
-		this.mockMvc.perform(get("/products/search?q=Desodorante Verde&min_price=12.00"))
-				.andExpect(jsonPath("$", hasSize(3)));
-	}
-	@Test
-	void findAllByFiltersMinPriceAndMaxPrice() throws Exception {
-		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
-		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
-		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
-
-		this.mockMvc.perform(get("/products/search?min_price=12.00&max_price=26.00"))
-				.andExpect(jsonPath("$", hasSize(3)));
-	}
-	@Test
-	void findAllByFiltersMaxPrice() throws Exception {
-		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
-		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
-		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
-
-		this.mockMvc.perform(get("/products/search?max_price=26.00"))
-				.andExpect(jsonPath("$", hasSize(3)));
-	}
-	@Test
-	void findAllByFiltersName() throws Exception {
-		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
-		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
-		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
-
-		this.mockMvc.perform(get("/products/search?q=Sabão"))
-				.andExpect(jsonPath("$", hasSize(1)));
-	}
-	@Test
-	void findAllByFiltersDescription() throws Exception {
-		this.productRepository.save(new Product("Desodorante Verde", "Desodorante Maravilhoso Verde", BigDecimal.valueOf(12.30)));
-		this.productRepository.save(new Product("Desodorante", "Desodorante Verde", BigDecimal.valueOf(15.12)));
-		this.productRepository.save(new Product("Sabão", "Sabão top", BigDecimal.valueOf(25.10)));
-
-		this.mockMvc.perform(get("/products/search?q=Sabão top"))
-				.andExpect(jsonPath("$", hasSize(1)));
 	}
 
 	@Test

@@ -41,6 +41,7 @@ public class ProductService {
 			return new EntityNotFoundException(exceptionMessage);
 		};
 	}
+
 	public Supplier<EntityNotFoundException> entityNotFoundExceptionSupplierById(String id) {
 		return () -> {
 			final String exceptionMessage = String.format("Produto id %s inexistente.", id);

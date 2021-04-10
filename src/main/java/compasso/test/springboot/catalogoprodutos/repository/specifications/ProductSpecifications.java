@@ -4,6 +4,7 @@ package compasso.test.springboot.catalogoprodutos.repository.specifications;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -15,9 +16,7 @@ public class ProductSpecifications {
 	private static String getLikeFilter(String searchValue) {
 		StringBuilder likeFilterBuilder = new StringBuilder();
 		likeFilterBuilder.append("%");
-		Arrays.stream(searchValue.split(" ")).forEach(word -> {
-			likeFilterBuilder.append(word.toLowerCase()).append("%");
-		});
+		Arrays.stream(searchValue.split(" ")).forEach(word -> likeFilterBuilder.append(word.toLowerCase()).append("%"));
 
 		return likeFilterBuilder.toString();
 
@@ -28,17 +27,18 @@ public class ProductSpecifications {
 			if (minPrice == null && maxPrice == null) {
 				return cb.isTrue(cb.literal(true)); // always true = no filtering
 			}
-			final Predicate minPricePredicate = cb.greaterThanOrEqualTo(root.get("price"), minPrice);
+			final Path<BigDecimal> pricePath = root.get("price");
+			final Predicate minPricePredicate = cb.greaterThanOrEqualTo(pricePath, minPrice);
 			if (maxPrice == null) {
 				return minPricePredicate;
 			}
 
-			final Predicate maxPricePredicate = cb.lessThanOrEqualTo(root.get("price"), maxPrice);
+			final Predicate maxPricePredicate = cb.lessThanOrEqualTo(pricePath, maxPrice);
 			if (minPrice == null) {
 				return maxPricePredicate;
 			}
 
-			return cb.between(root.get("price"), minPrice, maxPrice);
+			return cb.between(pricePath, minPrice, maxPrice);
 
 		};
 	}

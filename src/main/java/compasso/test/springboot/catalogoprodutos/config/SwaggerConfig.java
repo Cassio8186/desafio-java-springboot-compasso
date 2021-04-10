@@ -25,6 +25,10 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
 	private static final String BASE_PACKAGE = "compasso.test.springboot.catalogoprodutos";
+	public static final String INTERNAL_ERROR = "Internal Error";
+	public static final String ERROR_DTO = "ErrorDTO";
+	public static final String NOT_FOUND = "Not Found";
+	public static final String BAD_REQUEST = "Bad Request";
 	private final String appVersion;
 
 	public SwaggerConfig(@Value("${app.version}") String appVersion) {
@@ -55,8 +59,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
 		responseMessages.add(responseMessageBuilder
 				.code(500)
-				.message("Internal Error")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(INTERNAL_ERROR)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 		return responseMessages;
 	}
@@ -67,20 +71,20 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
 		responseMessages.add(responseMessageBuilder
 				.code(500)
-				.message("Internal Error")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(INTERNAL_ERROR)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 
 		responseMessages.add(responseMessageBuilder
 				.code(404)
-				.message("Not Found")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(NOT_FOUND)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 
 		responseMessages.add(responseMessageBuilder
 				.code(400)
-				.message("Bad Request")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(BAD_REQUEST)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 
 		return responseMessages;
@@ -92,14 +96,14 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
 		responseMessages.add(responseMessageBuilder
 				.code(500)
-				.message("Internal Error")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(INTERNAL_ERROR)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 
 		responseMessages.add(responseMessageBuilder
 				.code(400)
-				.message("Bad Request")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(BAD_REQUEST)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 
 		return responseMessages;
@@ -112,13 +116,13 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
 		responseMessages.add(responseMessageBuilder
 				.code(500)
-				.message("Internal Error")
-				.responseModel(new ModelRef("ErrorDTO"))
+				.message(INTERNAL_ERROR)
+				.responseModel(new ModelRef(ERROR_DTO))
 				.build());
 
 		responseMessages.add(responseMessageBuilder
 				.code(404)
-				.message("Not Found")
+				.message(NOT_FOUND)
 				.build());
 
 		return responseMessages;
