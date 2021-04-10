@@ -2,12 +2,20 @@ package compasso.test.springboot.catalogoprodutos.model.dto;
 
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductSaveDTO {
 
 	@NotEmpty(message = "deve ser preenchido")
@@ -23,50 +31,8 @@ public class ProductSaveDTO {
 	@DecimalMin(value = "0.0", message = "Deve ser acima de 0 reais.", inclusive = false)
 	private BigDecimal price;
 
-	public ProductSaveDTO() {
-	}
-
-	public ProductSaveDTO(String name, String description, BigDecimal price) {
-		this.name = name;
-		this.description = description;
-		this.price = price;
-	}
-
 	public static ProductSaveDTO fromEntity(Product product) {
 		return new ProductSaveDTO(product.getName(), product.getDescription(), product.getPrice());
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	@Override
-	public String toString() {
-		return "ProductSaveDTO{" +
-				"name='" + name + '\'' +
-				", description='" + description + '\'' +
-				", price=" + price +
-				'}';
 	}
 
 	public Product toEntity() {
