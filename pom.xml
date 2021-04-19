@@ -155,6 +155,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M4</version>
                 <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
                     <argLine>${jacocoArgLine}</argLine>
                     <reportsDirectory>${project.test.result.directory}/surefire</reportsDirectory>
                 </configuration>
