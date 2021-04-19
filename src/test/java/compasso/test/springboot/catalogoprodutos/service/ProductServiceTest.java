@@ -1,62 +1,74 @@
 package compasso.test.springboot.catalogoprodutos.service;
 
+import com.github.javafaker.Faker;
 import compasso.test.springboot.catalogoprodutos.exception.EntityNotFoundException;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
-import org.junit.jupiter.api.AfterEach;
+import compasso.test.springboot.catalogoprodutos.util.ProductFakerUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
 
 import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.productWithMinMaxPrice;
 import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.produtoWithNameOrDescription;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 @SpringBootTest
-@ActiveProfiles("h2")
 class ProductServiceTest {
 
+	public static final Faker faker = Faker.instance();
 	@Autowired
 	private ProductService productService;
 
-	@Autowired
-	private ProductRepository productRepository;
-
-	@AfterEach
-	void tearDown() {
-		this.productRepository.deleteAll();
-	}
+	@MockBean
+	private ProductRepository mockProductRepository;
 
 	@Test
 	void testProductShouldBeSaved() {
 		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+
+		final Product mockedProduct = cloneProduct(product);
+		final long mockedId = 5L;
+		mockedProduct.setId(mockedId);
+
+		when(mockProductRepository.save(any(Product.class))).thenReturn(mockedProduct);
+
 		final Product savedProduct = this.productService.save(product);
 
-		assertNotNull(savedProduct.getId());
+		assertEquals(mockedProduct.getId(), mockedId);
 		assertEquals(product.getName(), savedProduct.getName());
 		assertEquals(product.getDescription(), savedProduct.getDescription());
 		assertEquals(product.getPrice(), savedProduct.getPrice());
 	}
 
+	private Product cloneProduct(Product product) {
+		return new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice());
+	}
+
 	@Test
 	void testProductShouldBeUpdated() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-
-		final Product savedProduct = this.productService.save(product);
-
+		final long productId = 15L;
+		final Product product = ProductFakerUtil.generateProduct(false);
+		when(mockProductRepository.findById(productId)).thenReturn(Optional.of(product));
 		final String newName = "Desodorante.";
 		final String newDescription = "Desodorante Verde";
 		final BigDecimal newValue = BigDecimal.valueOf(14L);
 
-		savedProduct.setName(newName);
-		savedProduct.setDescription(newDescription);
-		savedProduct.setPrice(newValue);
-		final Product updatedProduct = this.productService.update(savedProduct);
+		final Product updateProduct = new Product(15L, newName, newDescription, newValue);
+		when(mockProductRepository.save(updateProduct)).thenReturn(updateProduct);
+
+
+		final Product updatedProduct = this.productService.update(updateProduct);
 
 		assertEquals(newName, updatedProduct.getName());
 		assertEquals(newDescription, updatedProduct.getDescription());
@@ -66,8 +78,9 @@ class ProductServiceTest {
 
 	@Test
 	void testUpdateProductShouldThrowException() {
-		final Product product = new Product(1L, "Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
+		when(mockProductRepository.findById(anyLong())).thenReturn(Optional.empty());
 
+		final Product product = ProductFakerUtil.generateProduct(false);
 
 		final String exceptionMessage = String.format("Produto id %d inexistente.", product.getId());
 
@@ -78,10 +91,10 @@ class ProductServiceTest {
 
 	@Test
 	void findAllShouldReturnSavedProducts() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		final Product product2 = new Product("Sabonete", "Sabonete top", BigDecimal.valueOf(12L));
-		this.productService.save(product);
-		this.productService.save(product2);
+		final Product product = ProductFakerUtil.generateProduct(false);
+		final Product product2 = ProductFakerUtil.generateProduct(false);
+
+		when(mockProductRepository.findAll()).thenReturn(Arrays.asList(product, product2));
 
 		final List<Product> products = this.productService.findAll();
 
@@ -91,6 +104,8 @@ class ProductServiceTest {
 
 	@Test
 	void findAllShouldReturnEmptyList() {
+		when(mockProductRepository.findAll()).thenReturn(new ArrayList<>());
+
 		final List<Product> products = this.productService.findAll();
 
 		final int expectedProductsSize = 0;
@@ -99,23 +114,25 @@ class ProductServiceTest {
 
 	@Test
 	void testShouldFindByIdShouldReturnProduct() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		final Product savedProduct = this.productService.save(product);
+		final Product product = ProductFakerUtil.generateProduct(true);
 
-		final Long expectedId = savedProduct.getId();
-		final String expectedDescription = product.getDescription();
-		final BigDecimal expectedPrice = product.getPrice();
+		final Faker faker = ProductServiceTest.faker;
+		final long randomId = faker.number().randomNumber();
+		when(mockProductRepository.findById(randomId)).thenReturn(Optional.of(product));
 
-		final Product foundProduct = this.productService.findById(expectedId);
+		final Product foundProduct = this.productService.findById(randomId);
 
-		assertEquals(expectedId, foundProduct.getId());
-		assertEquals(expectedDescription, foundProduct.getDescription());
-		assertEquals(expectedPrice, foundProduct.getPrice());
+		assertEquals(product.getId(), foundProduct.getId());
+		assertEquals(product.getDescription(), foundProduct.getDescription());
+		assertEquals(product.getPrice(), foundProduct.getPrice());
+		assertEquals(product.getName(), foundProduct.getName());
 	}
 
 	@Test
 	void testFindByIdShouldThrowException() {
-		Long id = 1231324L;
+		Long id = faker.number().randomNumber();
+		when(mockProductRepository.findById(id)).thenReturn(Optional.empty());
+
 		final String exceptionMessage = String.format("Produto id %d inexistente.", id);
 		assertThrows(EntityNotFoundException.class, () -> {
 			this.productService.findById(id);
@@ -126,30 +143,25 @@ class ProductServiceTest {
 
 	@Test
 	void testShouldDeleteById() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		final Product savedProduct = this.productService.save(product);
+		final Long id = faker.number().randomNumber();
+		final Product product = new Product();
+		product.setId(id);
+		when(mockProductRepository.findById(id)).thenReturn(Optional.of(product));
 
-		final String exceptionMessage = String.format("Produto id %d inexistente.", savedProduct.getId());
-
-
-		this.productService.deleteById(savedProduct.getId());
-		assertThrows(EntityNotFoundException.class, () -> {
-			this.productService.findById(product.getId());
-		}, exceptionMessage);
+		this.productService.deleteById(id);
+		verify(mockProductRepository, times(1)).delete(product);
 	}
 
 	@Test
-	void testShouldFindProductByName() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		this.productService.save(product);
-		final Product product2 = new Product("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
-		this.productService.save(product2);
+	void testShouldFindProductBySpecification() {
+		final Product product = ProductFakerUtil.generateProduct(true);
 
+		final String nameOrDescriptionFilterValue = product.getDescription();
+		final Specification<Product> productSpecification = where(produtoWithNameOrDescription(nameOrDescriptionFilterValue)
+				.and(productWithMinMaxPrice(BigDecimal.valueOf(25L), BigDecimal.valueOf(30L))));
+		when(mockProductRepository.findAll(productSpecification)).thenReturn(Collections.singletonList(product));
 
-		final String nameOrDescriptionFilterValue = "Desodorante";
-		List<Product> products = this.productService.findAllBySpecification(
-				where(produtoWithNameOrDescription(nameOrDescriptionFilterValue)
-						.and(productWithMinMaxPrice(null, null))));
+		List<Product> products = this.productService.findAllBySpecification(productSpecification);
 
 		assertEquals(1, products.size());
 
@@ -158,82 +170,21 @@ class ProductServiceTest {
 	}
 
 	@Test
-	void testShouldFindProductByDescription() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		this.productService.save(product);
-		final Product product2 = new Product("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
-		this.productService.save(product2);
+	void entityNotFoundExceptionSupplierById() {
+		final Long id = faker.number().randomNumber();
+		final String actualMessage = this.productService.entityNotFoundExceptionSupplierById(id).get().getMessage();
 
+		String expectedMessage = String.format("Produto id %d inexistente.", id);
+		assertEquals(expectedMessage, actualMessage);
 
-		final String nameOrDescriptionFilterValue = "Desodorante Azul";
-		List<Product> products = this.productService.findAllBySpecification(
-				where(produtoWithNameOrDescription(nameOrDescriptionFilterValue)
-						.and(productWithMinMaxPrice(null, null))));
-
-		assertEquals(1, products.size());
-
-		final Product foundProduct = products.stream().findFirst().get();
-		assertEquals(product.getDescription(), foundProduct.getDescription());
 	}
 
 	@Test
-	void testShouldFindProductByPriceMin() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		this.productService.save(product);
-		final Product product2 = new Product("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
-		this.productService.save(product2);
+	void testEntityNotFoundExceptionSupplierById() {
+		final String id = UUID.randomUUID().toString();
+		final String actualMessage = this.productService.entityNotFoundExceptionSupplierById(id).get().getMessage();
 
-
-		final BigDecimal minPriceFilterValue = BigDecimal.valueOf(26L);
-		List<Product> products = this.productService.findAllBySpecification(
-				where(produtoWithNameOrDescription(null)
-						.and(productWithMinMaxPrice(minPriceFilterValue, null))));
-
-		assertEquals(1, products.size());
-
-		final Product foundProduct = products.stream().findFirst().get();
-		assertEquals(product2.getDescription(), foundProduct.getDescription());
-	}
-
-	@Test
-	void testShouldFindProductByPriceMax() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		this.productService.save(product);
-		final Product product2 = new Product("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
-		this.productService.save(product2);
-
-
-		final BigDecimal maxPriceFilterValue = BigDecimal.valueOf(15.25);
-		List<Product> products = this.productService.findAllBySpecification(
-				where(produtoWithNameOrDescription(null)
-						.and(productWithMinMaxPrice(null, maxPriceFilterValue))));
-
-		assertEquals(1, products.size());
-
-		final Product foundProduct = products.stream().findFirst().get();
-		assertEquals(product.getDescription(), foundProduct.getDescription());
-	}
-
-	@Test
-	void testShouldFindProductByPriceMinMax() {
-		final Product product = new Product("Desodorante", "Desodorante Azul", BigDecimal.valueOf(15.25));
-		this.productService.save(product);
-		final Product product2 = new Product("Sabonete", "Sabonete top", BigDecimal.valueOf(26L));
-		this.productService.save(product2);
-		final Product product3 = new Product("Pão", "Pão Francês", BigDecimal.valueOf(2L));
-		this.productService.save(product3);
-
-
-		List<Product> products = this.productService.findAllBySpecification(
-				where(produtoWithNameOrDescription(null)
-						.and(productWithMinMaxPrice(BigDecimal.valueOf(2L), BigDecimal.valueOf(16L)))));
-
-		assertEquals(2, products.size());
-
-		final boolean productsHasSabonete = products.stream().anyMatch(filteredProduct -> filteredProduct.getDescription().equals(product2.getDescription()));
-
-		assertFalse(productsHasSabonete);
-
-
+		String expectedMessage = String.format("Produto id %s inexistente.", id);
+		assertEquals(expectedMessage, actualMessage);
 	}
 }

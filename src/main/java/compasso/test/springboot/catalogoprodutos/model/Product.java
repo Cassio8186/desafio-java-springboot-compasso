@@ -1,5 +1,6 @@
 package compasso.test.springboot.catalogoprodutos.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Entity
 @Table
+@Builder
 public class Product implements Serializable {
 
 	@Id
