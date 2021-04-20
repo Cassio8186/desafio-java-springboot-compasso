@@ -1,0 +1,43 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: catalogo_produtos_app
+    container_name: catalogo_produtos_backend
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - 9999:9999
+    environment:
+      active_profile: mysql
+    networks:
+      - app-network
+
+  database:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - desafio-java-springboot-compasso-mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - app-network
+    container_name: catalogo_produtos_database
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql-local
+      MYSQL_DATABASE: catalogo_produtos
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+
+volumes:
+  desafio-java-springboot-compasso-mysql:
+
+networks:
+  app-network:
+    driver: bridge

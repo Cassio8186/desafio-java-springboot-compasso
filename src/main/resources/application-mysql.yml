@@ -1,10 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/catalogo_produtos
+    url: jdbc:mysql://${DATASOURCE_HOST:127.0.0.1}:${DATASOURCE_PORT:3306}/catalogo_produtos
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: mysql-local
   jpa:
     hibernate:
       ddl-auto: update
-

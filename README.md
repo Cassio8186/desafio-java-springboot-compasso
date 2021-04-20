@@ -1,29 +1,43 @@
 ![Logo Compasso](https://compasso.com.br/wp-content/uploads/2020/07/LogoCompasso-Negativo.png)
 
-# Catálogo de produtos
+# Catálogo De Produtos
 
 ## Requisitos Projeto
 
 Para acessar os requisitos do projeto clique em [COMPASSO-README.md](COMPASSO-README.md)
 
-## Requisitos para rodar projeto localmente
+## Requisitos Para Rodar Projeto Localmente
 
 - Java 8
 - Maven
 
-## Comandos Maven
-
-### Para rodar testes automatizados
+## Para Rodar Testes Automatizados
 
 Entre na pasta do projeto e execute o comando:
 
 ```shell
-mvn clean test
+mvn clean test -P test
 ```
 
-### Para rodar projeto na porta 9999
+## Para Rodar Projeto Na Porta 9999
 
-#### Em Banco em memória
+### Rodando Aplicação E Banco De Dados Com Docker
+
+Requisitos: `docker` e `docker-compose`.
+
+Com docker rodando, execute o comando na pasta raíz do projeto:
+
+```shell
+mvn clean package -DskipTests && docker-compose up -d --build
+```
+
+### Acompanhando Logs De App Em Docker
+
+```shell
+docker-compose logs backend -f
+ ```
+
+### Rodando Aplicação Em Banco Em Memória
 
 Entre na pasta do projeto e execute o comando:
 
@@ -31,17 +45,13 @@ Entre na pasta do projeto e execute o comando:
 mvn clean spring-boot:run
 ```
 
-#### Em Banco mysql
+### Rodando Aplicação Com Banco Em Docker.
 
-##### Configurando Banco
-
-Com docker rodando, execute o comando, para iniciar o container com banco de dados:
+Inicie o banco de dados com o seguinte comando
 
 ```shell
-docker-compose -f stack.yml up -d
+docker-compose up -d database
 ```
-
-##### Iniciando aplicação.
 
 após inicialização do banco de dados execute
 
@@ -51,21 +61,21 @@ após inicialização do banco de dados execute
 
 ou execute o projeto em sua IDE de preferência com o perfil spring boot `mysql`
 
-##### Desligando aplicação
+##### Desligando Aplicação
 
-Para desligar o banco execute o comando
-
-```shell
-docker-compose -f stack.yml down
-```
-
-Para desligar o banco e remover todos os dados salvos em volume use:
+Para desligar o(s) container(s) execute o comando
 
 ```shell
-docker-compose -f stack.yml down -v --remove-orphans
+docker-compose down
 ```
 
-### Para acessar documentação swagger
+Para desligar o(s) container(s) e remover todos os dados salvos em volume/imagem/containers use:
+
+```shell
+docker-compose down -v --remove-orphans 
+```
+
+### Para Acessar Documentação Swagger
 
 após iniciar projeto entre no link:
 http://localhost:9999, após isso será direcionado para a documentação Swagger.
