@@ -6,7 +6,7 @@ import compasso.test.springboot.catalogoprodutos.model.Product;
 
 import java.math.BigDecimal;
 
-public class ProductFakerUtil {
+public class ProductUtil {
 
 	private static final Faker faker = Faker.instance();
 
@@ -26,5 +26,8 @@ public class ProductFakerUtil {
 				.price(BigDecimal.valueOf(faker.number().randomDouble(2, 1, 10000)))
 				.build();
 
+	}
+	public static Product cloneProduct(Product product) {
+		return new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice());
 	}
 }

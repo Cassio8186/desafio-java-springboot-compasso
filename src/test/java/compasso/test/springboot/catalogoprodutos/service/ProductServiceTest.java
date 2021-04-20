@@ -4,7 +4,7 @@ import com.github.javafaker.Faker;
 import compasso.test.springboot.catalogoprodutos.exception.EntityNotFoundException;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
-import compasso.test.springboot.catalogoprodutos.util.ProductFakerUtil;
+import compasso.test.springboot.catalogoprodutos.util.ProductUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +17,7 @@ import java.util.*;
 
 import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.productWithMinMaxPrice;
 import static compasso.test.springboot.catalogoprodutos.repository.specifications.ProductSpecifications.produtoWithNameOrDescription;
+import static compasso.test.springboot.catalogoprodutos.util.ProductUtil.cloneProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,14 +54,10 @@ class ProductServiceTest {
 		assertEquals(product.getPrice(), savedProduct.getPrice());
 	}
 
-	private Product cloneProduct(Product product) {
-		return new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice());
-	}
-
 	@Test
 	void testProductShouldBeUpdated() {
 		final long productId = 15L;
-		final Product product = ProductFakerUtil.generateProduct(false);
+		final Product product = ProductUtil.generateProduct(false);
 		when(mockProductRepository.findById(productId)).thenReturn(Optional.of(product));
 		final String newName = "Desodorante.";
 		final String newDescription = "Desodorante Verde";
@@ -82,7 +79,7 @@ class ProductServiceTest {
 	void testUpdateProductShouldThrowException() {
 		when(mockProductRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		final Product product = ProductFakerUtil.generateProduct(false);
+		final Product product = ProductUtil.generateProduct(false);
 
 		final String exceptionMessage = String.format("Produto id %d inexistente.", product.getId());
 
@@ -93,8 +90,8 @@ class ProductServiceTest {
 
 	@Test
 	void findAllShouldReturnSavedProducts() {
-		final Product product = ProductFakerUtil.generateProduct(false);
-		final Product product2 = ProductFakerUtil.generateProduct(false);
+		final Product product = ProductUtil.generateProduct(false);
+		final Product product2 = ProductUtil.generateProduct(false);
 
 		when(mockProductRepository.findAll()).thenReturn(Arrays.asList(product, product2));
 
@@ -116,7 +113,7 @@ class ProductServiceTest {
 
 	@Test
 	void testShouldFindByIdShouldReturnProduct() {
-		final Product product = ProductFakerUtil.generateProduct(true);
+		final Product product = ProductUtil.generateProduct(true);
 
 		final Faker faker = ProductServiceTest.faker;
 		final long randomId = faker.number().randomNumber();
@@ -156,7 +153,7 @@ class ProductServiceTest {
 
 	@Test
 	void testShouldFindProductBySpecification() {
-		final Product product = ProductFakerUtil.generateProduct(true);
+		final Product product = ProductUtil.generateProduct(true);
 
 		final String nameOrDescriptionFilterValue = product.getDescription();
 		final Specification<Product> productSpecification = where(produtoWithNameOrDescription(nameOrDescriptionFilterValue)
