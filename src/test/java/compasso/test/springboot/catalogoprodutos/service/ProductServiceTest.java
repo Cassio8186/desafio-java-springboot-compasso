@@ -79,7 +79,7 @@ class ProductServiceTest {
 	void testUpdateProductShouldThrowException() {
 		when(mockProductRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		final Product product = ProductUtil.generateProduct(false);
+		final Product product = ProductUtil.generateProduct(true);
 
 		final String exceptionMessage = String.format("Produto id %d inexistente.", product.getId());
 
