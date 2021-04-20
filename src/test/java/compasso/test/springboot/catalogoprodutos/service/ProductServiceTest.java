@@ -6,9 +6,10 @@ import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
 import compasso.test.springboot.catalogoprodutos.util.ProductFakerUtil;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -23,14 +24,15 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
 	public static final Faker faker = Faker.instance();
-	@Autowired
+
+	@InjectMocks
 	private ProductService productService;
 
-	@MockBean
+	@Mock
 	private ProductRepository mockProductRepository;
 
 	@Test
