@@ -2,10 +2,7 @@ package compasso.test.springboot.catalogoprodutos.model.dto;
 
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
@@ -17,6 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ProductSaveDTO implements Serializable {
 
 	@NotEmpty(message = "deve ser preenchido")

@@ -1,10 +1,7 @@
 package compasso.test.springboot.catalogoprodutos.model.dto;
 
 import compasso.test.springboot.catalogoprodutos.model.Product;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ProductDTO {
 	private String id;
 	private String name;
