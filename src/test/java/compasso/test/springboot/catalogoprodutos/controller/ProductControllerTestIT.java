@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("h2")
-class ProductControllerTest {
+class ProductControllerTestIT {
 
 	private final JsonMapper jsonMapper = JsonMapper.builder().build();
 

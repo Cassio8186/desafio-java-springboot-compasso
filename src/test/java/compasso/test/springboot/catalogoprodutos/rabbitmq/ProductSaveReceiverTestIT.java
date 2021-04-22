@@ -2,7 +2,7 @@ package compasso.test.springboot.catalogoprodutos.rabbitmq;
 
 import com.github.javafaker.Faker;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
-import compasso.test.springboot.catalogoprodutos.rabbitmq.sender.ProductSaveSenderTest;
+import compasso.test.springboot.catalogoprodutos.rabbitmq.sender.ProductSaveSender;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
 @ActiveProfiles("h2")
-class ProductSaveReceiverTest {
+class ProductSaveReceiverTestIT {
 
 	@Autowired
-	private ProductSaveSenderTest productSaveSenderTest;
+	private ProductSaveSender productSaveSender;
 
 	@Autowired
 	private ProductSaveReceiver productSaveClient;
@@ -38,7 +38,7 @@ class ProductSaveReceiverTest {
 	void receiveMessage_WhenReceiveProductDTOMessage_ExpectedCallProductService() throws InterruptedException {
 		final BigDecimal randomPrice = BigDecimal.valueOf(Faker.instance().number().randomDouble(2, 0L, 1000L));
 		final ProductSaveDTO productSaveDTO = new ProductSaveDTO("Product from rabbit", "Product description", randomPrice);
-		this.productSaveSenderTest.send(productSaveDTO);
+		this.productSaveSender.send(productSaveDTO);
 		await().atMost(10, SECONDS).until(this::productIsSavedInDatabase);
 	}
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class ProductSaveSenderTest {
+public class ProductSaveSender {
 
 	public static final Faker faker = Faker.instance();
 	@Autowired
