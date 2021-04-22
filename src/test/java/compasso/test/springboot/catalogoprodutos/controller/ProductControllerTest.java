@@ -1,6 +1,6 @@
 package compasso.test.springboot.catalogoprodutos.controller;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import compasso.test.springboot.catalogoprodutos.model.Product;
 import compasso.test.springboot.catalogoprodutos.model.dto.ProductSaveDTO;
 import compasso.test.springboot.catalogoprodutos.repository.ProductRepository;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,11 +34,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("h2")
 class ProductControllerTest {
 
-	private final Gson gson = new Gson();
+	private final JsonMapper jsonMapper = JsonMapper.builder().build();
+
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
 	private ProductRepository productRepository;
+
+	static Stream<Arguments> queryParamsAndExpectedSizesProviders() {
+		return Stream.of(
+				arguments("q=Desodorante Verde", 2),
+				arguments("q=Desodorante Verde&min_price=12.00", 2),
+				arguments("q=Desodorante Verde&min_price=14.00", 1),
+				arguments("min_price=12.00&max_price=26.00", 3),
+				arguments("max_price=26.00", 3),
+				arguments("max_price=14.00", 1),
+				arguments("min_price=15.13", 1),
+				arguments("min_price=27.00", 0),
+				arguments("q=Sabão", 1),
+				arguments("q=Sabão top", 1)
+		);
+	}
 
 	@BeforeEach
 	void beforeEach() {
@@ -49,7 +64,7 @@ class ProductControllerTest {
 	@Test
 	void saveShouldReturnSavedProduct() throws Exception {
 		final ProductSaveDTO product = new ProductSaveDTO("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
-		final String json = gson.toJson(product);
+		final String json = jsonMapper.writeValueAsString(product);
 
 		final String url = "/products";
 		this.mockMvc.perform(post(url)
@@ -66,7 +81,7 @@ class ProductControllerTest {
 	@Test
 	void saveShouldReturnValidationException() throws Exception {
 		ProductSaveDTO product = new ProductSaveDTO(null, "Desodorante Verde", BigDecimal.valueOf(20L));
-		String json = gson.toJson(product);
+		String json = jsonMapper.writeValueAsString(product);
 
 		final String url = "/products";
 		this.mockMvc.perform(post(url)
@@ -78,7 +93,7 @@ class ProductControllerTest {
 				.andExpect(expectedExceptionMessage("name: deve ser preenchido."));
 
 		product = new ProductSaveDTO("Something", null, BigDecimal.ONE);
-		json = gson.toJson(product);
+		json = jsonMapper.writeValueAsString(product);
 
 		this.mockMvc.perform(post(url)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -89,7 +104,7 @@ class ProductControllerTest {
 				.andExpect(expectedExceptionMessage("description: deve ser preenchido."));
 
 		product = new ProductSaveDTO("Something", "Something else", null);
-		json = gson.toJson(product);
+		json = jsonMapper.writeValueAsString(product);
 
 		this.mockMvc.perform(post(url)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -104,7 +119,7 @@ class ProductControllerTest {
 	@Test
 	void updateShouldReturnValidationException() throws Exception {
 		ProductSaveDTO product = new ProductSaveDTO(null, "Desodorante Verde", BigDecimal.valueOf(20L));
-		String json = gson.toJson(product);
+		String json = jsonMapper.writeValueAsString(product);
 
 		final String url = "/products/1";
 		this.mockMvc.perform(put(url)
@@ -116,7 +131,7 @@ class ProductControllerTest {
 				.andExpect(expectedExceptionMessage("name: deve ser preenchido."));
 
 		product = new ProductSaveDTO("Something", null, BigDecimal.ONE);
-		json = gson.toJson(product);
+		json = jsonMapper.writeValueAsString(product);
 
 		this.mockMvc.perform(put(url)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -127,7 +142,7 @@ class ProductControllerTest {
 				.andExpect(expectedExceptionMessage("description: deve ser preenchido."));
 
 		product = new ProductSaveDTO("Something", "Something else", null);
-		json = gson.toJson(product);
+		json = jsonMapper.writeValueAsString(product);
 
 		this.mockMvc.perform(put(url)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -151,7 +166,7 @@ class ProductControllerTest {
 		productSaveDTO.setDescription("Desodorante Azul");
 		productSaveDTO.setPrice(BigDecimal.ONE);
 
-		final String json = gson.toJson(productSaveDTO);
+		final String json = jsonMapper.writeValueAsString(productSaveDTO);
 
 		final String url = String.format("/products/%d", savedProduct.getId());
 
@@ -170,7 +185,7 @@ class ProductControllerTest {
 	void updateShouldReturnNotFoundException() throws Exception {
 		final ProductSaveDTO product = new ProductSaveDTO("Desodorante", "Desodorante Verde", BigDecimal.valueOf(20L));
 
-		final String json = gson.toJson(product);
+		final String json = jsonMapper.writeValueAsString(product);
 
 		final int expectedId = 2;
 		final String url = String.format("/products/%d", expectedId);
@@ -194,7 +209,6 @@ class ProductControllerTest {
 	private ResultMatcher expectStatusCode(HttpStatus httpStatus) {
 		return jsonPath("$.status_code").value(httpStatus.value());
 	}
-
 
 	@Test
 	void findByIdShouldReturnProduct() throws Exception {
@@ -260,21 +274,6 @@ class ProductControllerTest {
 
 		this.mockMvc.perform(get("/products/search?" + queryParam))
 				.andExpect(jsonPath("$", hasSize(expectedSize)));
-	}
-
-	static Stream<Arguments> queryParamsAndExpectedSizesProviders() {
-		return Stream.of(
-				arguments("q=Desodorante Verde",2),
-				arguments("q=Desodorante Verde&min_price=12.00",2),
-				arguments("q=Desodorante Verde&min_price=14.00",1),
-				arguments("min_price=12.00&max_price=26.00",3),
-				arguments("max_price=26.00",3),
-				arguments("max_price=14.00",1),
-				arguments("min_price=15.13",1),
-				arguments("min_price=27.00",0),
-				arguments("q=Sabão",1),
-				arguments("q=Sabão top",1)
-		);
 	}
 
 	@Test
