@@ -9,7 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 
-@RabbitListener(queues = "catalog-product-save")
+@RabbitListener(queues = "${queue.catalog-product.save.name}")
 @Slf4j
 @Component
 public class ProductSaveReceiver implements Receiver<ProductSaveDTO> {
