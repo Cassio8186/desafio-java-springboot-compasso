@@ -10,13 +10,14 @@ import lombok.Setter;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductSaveDTO {
+public class ProductSaveDTO implements Serializable {
 
 	@NotEmpty(message = "deve ser preenchido")
 	@ApiModelProperty(example = "\"Desodorante\"", required = true)

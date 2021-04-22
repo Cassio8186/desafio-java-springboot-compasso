@@ -11,12 +11,14 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      rabbitmq-server:
+        condition: service_started
     ports:
       - 9999:9999
     environment:
       active_profile: mysql
     networks:
-      - app-network
+      - catalogo-produtos-network
 
   database:
     image: mysql
@@ -27,7 +29,7 @@ services:
     ports:
       - 3306:3306
     networks:
-      - app-network
+      - catalogo-produtos-network
     container_name: catalogo_produtos_database
     environment:
       MYSQL_ROOT_PASSWORD: mysql-local
@@ -35,9 +37,19 @@ services:
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
 
+  rabbitmq-server:
+    image: rabbitmq:management
+    container_name: catalogo_produtos_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - catalogo-produtos-network
+
+
 volumes:
   desafio-java-springboot-compasso-mysql:
 
 networks:
-  app-network:
+  catalogo-produtos-network:
     driver: bridge
