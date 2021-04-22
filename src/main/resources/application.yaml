@@ -7,3 +7,9 @@ server:
 spring:
   profiles:
     active: ${ACTIVE_PROFILE:h2}
+
+queue:
+  product:
+    save:
+      name:
+        catalog-product-save
